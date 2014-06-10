@@ -29,14 +29,14 @@ local function loc_to_coord (loc)
 	return geocode_res["postalCodes"][1]["lat"], geocode_res["postalCodes"][1]["lng"]
 end
 
--- Takes a location a Lua table (converted from JSON) with forcast info
-function weather.get_forcast (loc)
+-- Takes a location a Lua table (converted from JSON) with forecast info
+function weather.get_forecast (loc)
 	lat, lon = loc_to_coord(loc)
 
 	body, res_code = http.request("http://forecast.weather.gov/MapClick.php?lat="
 									.. lat .. "&lon=" .. lon .. "&FcstType=json")
 	if res_code ~= 200 then
-		print("Error getting forcast.")
+		print("Error getting forecast.")
 		return nil
 	end
 
