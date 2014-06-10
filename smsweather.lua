@@ -1,3 +1,5 @@
+-- XXX: This seems hacky?
+package.path = package.path .. ';/home/alex/Programming/smsweather/?.lua'
 local weather = require("weather")
 local email = require("email")
 
