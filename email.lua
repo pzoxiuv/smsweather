@@ -27,6 +27,19 @@ local function get_email_content (file)
 	return content
 end
 
+-- Chops forecast into 160 character segments (including the sender's email address) for sending over sms
+-- Returns table of chopped up strings
+local function chop_forecast (forecast, sender_addr)
+    local i = 1
+    local strs = {}
+    while i < string.len(forecast) do
+        table.insert(strs, string.sub(forecast, i, i+159-string.len(sender_addr)))
+        i = i + 159-string.len(sender_addr)
+    end
+    return strs
+end
+
+
 -- Takes a filename of an SMTP file and parses out and returns the sender address and content
 function email.parse_file (filename)
 	local smtp_file = assert(io.open(arg[1], "r"))
@@ -37,6 +50,13 @@ function email.parse_file (filename)
 	smtp_file:close()
 
 	return sender_addr, content
+end
+
+function email.send_forecast (forecast, sender_addr)
+	for _, v in ipairs(chop_forecast(forecast, sender_addr)) do
+		os.execute("echo \"" .. v .. "\" | mail " .. sender_addr)
+		os.execute("sleep 5")	-- Need to wait between messages, otherwise the first one doesn't send (?)
+	end
 end
 
 return email
