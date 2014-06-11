@@ -3,7 +3,7 @@ local email = {}
 -- Scans an SMTP file for the sender's email and returns it. Takes filename as arg
 local function get_sender_addr (file)
 	for line in file:lines() do
-		for w in string.gmatch(line, "Return%-Path: <(.-)>") do return w end
+		for w in string.gmatch(line, "From:.- <(.-)>") do return w end
 	end
 end
 
@@ -27,14 +27,14 @@ local function get_email_content (file)
 	return content
 end
 
--- Chops forecast into 160 character segments (including the sender's email address) for sending over sms
--- Returns table of chopped up strings
-local function chop_forecast (forecast, sender_addr)
+-- Chops forecast into 160 character segments for sending over sms.
+-- Returns table of chopped up strings.
+local function chop_forecast (forecast)
     local i = 1
     local strs = {}
     while i < string.len(forecast) do
-        table.insert(strs, string.sub(forecast, i, i+159-string.len(sender_addr)))
-        i = i + 159-string.len(sender_addr)
+        table.insert(strs, string.sub(forecast, i, i+159))
+        i = i + 160
     end
     return strs
 end
@@ -53,7 +53,7 @@ function email.parse_file (filename)
 end
 
 function email.send_forecast (forecast, sender_addr)
-	for _, v in ipairs(chop_forecast(forecast, sender_addr)) do
+	for _, v in ipairs(chop_forecast(forecast)) do
 		os.execute("echo \"" .. v .. "\" | mail " .. sender_addr)
 		os.execute("sleep 5")	-- Need to wait between messages, otherwise the first one doesn't send (?)
 	end
