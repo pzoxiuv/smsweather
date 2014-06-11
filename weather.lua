@@ -2,6 +2,7 @@ local weather = {}
 
 local json = require("json")
 local http = require("socket.http")
+local parser = require("parser")
 
 -- URL encodes string, taken from lua-users.org/wiki/StringRecipes
 local function url_encode (str)
@@ -13,17 +14,12 @@ end
 
 -- Takes a location (city & state or zip) and returns its latitude and longitude
 local function loc_to_coord (loc)
-	local loc_str = ""
-	if string.find(loc, "%d") ~= nil then
-		loc_str = "&zip=" .. loc
-	else
-		local city_state = {}
-		loc = loc .. "," -- Make sure loc ends in comma so pattern match below works. XXX better way to do this?
-		for field in string.gmatch(loc, "(.-),") do table.insert(city_state, field) end
-		loc_str = "&city=" .. city_state[1] .. "&state=" .. city_state[2]
-	end
+	city, state, zip = parser.parse_loc(loc)
+	if city ~= nil and state ~= nil then loc_str = "city=" .. city .. "&state=" .. state
+	elseif zip ~= nil then loc_str = "zip=" .. zip
+	else return nil, nil end	-- No valid loc
 
-	local body, res_code = http.request("http://geoservices.tamu.edu/services/geocode/webservice/geocoderwebservicehttpnonparsed_v04_01.aspx?apikey=953e7c59b87544f7bcf9a7068ef18d30&version=4.01" .. url_encode(loc_str))
+	local body, res_code = http.request("http://geoservices.tamu.edu/services/geocode/webservice/geocoderwebservicehttpnonparsed_v04_01.aspx?apikey=953e7c59b87544f7bcf9a7068ef18d30&version=4.01&" .. url_encode(loc_str))
 
 	if res_code ~= 200 then
 		print("Error finding latitude and longitude.")
