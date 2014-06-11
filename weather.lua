@@ -45,4 +45,19 @@ function weather.get_forecast (loc)
 	return json.decode(body)
 end
 
+-- Takes in the user's info request and a forecast table and returns a string with the requested info.
+function weather.prepare_forecast (forecast, req)
+	local forecast_str = ""
+
+	req_table = parser.parse_req(req)
+
+	if req_table["forecast"] then
+		for i=1, req_table["num_forecasts"] do
+			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["text"][i]
+		end
+	end
+
+	return forecast_str
+end
+
 return weather

@@ -17,4 +17,24 @@ function parser.parse_loc (loc)
 	return city, state, zip
 end
 
+-- Separates out the location and the info request from the user's message.
+function parser.parse_content (content)
+	if string.find(content, "%.") == nil then return content end
+	return string.sub(content, string.find(content, "%.")-1),
+		   string.sub(content, string.find(content, "%.")+1)
+end
+
+-- Parses out the info the user is requesting.  See README for valid info and formatting.
+function parser.parse_req (req)
+	req_table = {}
+	if req == nil then
+		req_table["forecast"] = true
+		req_table["num_forecasts"] = 1
+		return req_table
+	end
+
+	req = req .. ","
+	for info in string.gmatch(req, "(.-),") do table.insert(req_table, info) end
+end
+
 return parser
