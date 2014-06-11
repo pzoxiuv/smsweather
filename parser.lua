@@ -20,7 +20,7 @@ end
 -- Separates out the location and the info request from the user's message.
 function parser.parse_content (content)
 	if string.find(content, "%.") == nil then return content end
-	return string.sub(content, string.find(content, "%.")-1),
+	return string.sub(content, 1, string.find(content, "%.")-1),
 		   string.sub(content, string.find(content, "%.")+1)
 end
 
@@ -28,13 +28,14 @@ end
 function parser.parse_req (req)
 	req_table = {}
 	if req == nil then
-		req_table["forecast"] = true
-		req_table["num_forecasts"] = 1
-		return req_table
+		req_table["type"] = "full"
+		req_table["num"] = 1
+	else
+		req = string.gsub(req, "^%s*(.-)%s*$", "%1")	-- Trim whitespace
+		req_table["num"] = string.sub(req, 1, string.find(req, "%s")-1)
+		req_table["type"] = string.sub(req, string.find(req, "%s")+1)
 	end
-
-	req = req .. ","
-	for info in string.gmatch(req, "(.-),") do table.insert(req_table, info) end
+	return req_table
 end
 
 return parser

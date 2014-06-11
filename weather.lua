@@ -51,10 +51,15 @@ function weather.prepare_forecast (forecast, req)
 
 	req_table = parser.parse_req(req)
 
-	if req_table["forecast"] then
-		for i=1, req_table["num_forecasts"] do
+	if req_table["type"] == "full" then
+		for i=1, req_table["num"] do
 			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["text"][i]
 		end
+	elseif req_table["type"] == "short" then
+		for i=1, req_table["num"] do
+			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["weather"][i] .. ". "
+		end
+        forecast_str = string.gsub(forecast_str, "^%s*(.-)%s*$", "%1")
 	end
 
 	return forecast_str
