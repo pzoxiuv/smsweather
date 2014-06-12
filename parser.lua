@@ -1,41 +1,36 @@
 local parser = {}
 
--- Parses out the city & state or zip code of the given location string.
-function parser.parse_loc (loc)
-	local city = nil
-	local state = nil
-	local zip = nil
-    if string.find(loc, "%d") ~= nil then
-		zip = loc
-    else
-        local city_state = {}
-        loc = loc .. "," -- Make sure loc ends in comma so pattern match below works. XXX better way to do this?
-        for field in string.gmatch(loc, "(.-),") do table.insert(city_state, field) end
-		city = city_state[1]
-		state = city_state[2]
-    end
-	return city, state, zip
-end
-
 -- Separates out the location and the info request from the user's message.
 function parser.parse_content (content)
-	if string.find(content, "%.") == nil then return content end
-	return string.sub(content, 1, string.find(content, "%.")-1),
-		   string.sub(content, string.find(content, "%.")+1)
-end
+    local loc = {}
+    local req_table = {}
 
--- Parses out the info the user is requesting.  See README for valid info and formatting.
-function parser.parse_req (req)
-	req_table = {}
-	if req == nil then
-		req_table["type"] = "full"
-		req_table["num"] = 1
-	else
-		req = string.gsub(req, "^%s*(.-)%s*$", "%1")	-- Trim whitespace
-		req_table["num"] = string.sub(req, 1, string.find(req, "%s")-1)
-		req_table["type"] = string.sub(req, string.find(req, "%s")+1)
-	end
-	return req_table
+    content = string.gsub(content, "^%s*(.-)%s*$", "%1")    -- trim whitespace
+    content = string.gsub(content, "[.,]", " ")      -- replace punctuation with spaces
+    content = string.gsub(content, " (%s*)", " ")    -- remove repeated spaces
+    content = content .. " "                        -- add a trailing space for splitting
+
+    t = {}
+    for f in string.gmatch(content, "(.-) ") do table.insert(t, f) end
+
+    -- TODO: Check that the correct number of items end up in t
+    if string.find(t[1], "%d") ~= nil then  -- First item in request was a zip, not city
+        loc["zip"] = t[1]
+        req_table["num"] = t[2]
+        req_table["type"] = t[3]
+        return loc, req_table
+    else
+        for i, v in ipairs(t) do    -- Iterate through until we get num forecasts requested.  Everything before that is the loc
+            if string.find(v, "%d") ~= nil then -- Found the num forecasts requested: Right before was state, and before that the city
+                loc["state"] = t[i-1]
+                loc["city"] = ""
+                for j=1, i-2 do loc["city"] = loc["city"] .. t[j] .. " " end
+                req_table["num"] = t[i]
+                req_table["type"] = t[i+1]
+                return loc, req_table
+            end
+        end
+    end
 end
 
 return parser

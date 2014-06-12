@@ -14,9 +14,8 @@ end
 
 -- Takes a location (city & state or zip) and returns its latitude and longitude
 local function loc_to_coord (loc)
-	city, state, zip = parser.parse_loc(loc)
-	if city ~= nil and state ~= nil then loc_str = "city=" .. city .. "&state=" .. state
-	elseif zip ~= nil then loc_str = "zip=" .. zip
+	if loc["city"] ~= nil and loc["state"] ~= nil then loc_str = "city=" .. loc["city"] .. "&state=" .. loc["state"]
+	elseif loc["zip"] ~= nil then loc_str = "zip=" .. loc["zip"]
 	else return nil, nil end	-- No valid loc
 
 	local body, res_code = http.request("http://geoservices.tamu.edu/services/geocode/webservice/geocoderwebservicehttpnonparsed_v04_01.aspx?apikey=953e7c59b87544f7bcf9a7068ef18d30&version=4.01&" .. url_encode(loc_str))
@@ -49,14 +48,12 @@ end
 function weather.prepare_forecast (forecast, req)
 	local forecast_str = ""
 
-	req_table = parser.parse_req(req)
-
-	if req_table["type"] == "full" then
-		for i=1, req_table["num"] do
+	if req["type"] == "full" then
+		for i=1, req["num"] do
 			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["text"][i]
 		end
-	elseif req_table["type"] == "short" then
-		for i=1, req_table["num"] do
+	elseif req["type"] == "short" then
+		for i=1, req["num"] do
 			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["weather"][i] .. ". "
 		end
         forecast_str = string.gsub(forecast_str, "^%s*(.-)%s*$", "%1")
