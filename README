@@ -1,0 +1,22 @@
+SMS Weather, a service for delivering weather forecasts via text messages.
+
+Text a forecast request to 412-423-8207.  Make requests in the form of a
+location, desired number of forecasts, and forecast type.
+
+Location can be either a zip code, or a city and a state.
+
+Number of forecasts is how many forecast periods will be given.  For example,
+requesting four forecasts at 11am on a Tuesday will return the forecasts for
+"This afternoon," "Tonight," "Wednesday," and "Wednesday night."
+
+Forecast type is either "short" or "full."  An example of a short forecast
+might be "Partly cloudy" or "Chance thunderstorms."  A full forecast is longer,
+e.g. "A chance of drizzle, then a chance of rain or drizzle after 1am.  Patchy
+fog.  Otherwise, cloudy, with a low around 61. East wind around 7 mph.  Chance
+of precipitation is 30%. New precipitation amounts between a tenth and quarter
+of an inch possible."
+
+Sample requests:
+
+21502 4 short
+Cumberland, md 1 full
