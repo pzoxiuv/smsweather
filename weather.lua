@@ -53,6 +53,27 @@ function weather.get_forecast (loc)
 	return json.decode(body)
 end
 
+local function reduce_forecast (forecast)
+	local orig_forecast = forecast
+	local reduced_forecast = ""
+
+	-- Remove wind speed and precipitation sentences.
+	for f in string.gmatch(forecast, "(.-)%.") do
+		if string.find(f, "amount") == nil and string.find(f, "mph") == nil then
+			reduced_forecast = reduced_forecast .. f .. "."
+		end
+	end
+
+	-- Remove repeated spaces
+	reduced_forecast = string.gsub(reduced_forecast, " (%s*)", " ")
+
+	if math.ceil(string.len(reduced_forecast)/160) < math.ceil(string.len(orig_forecast)/160) then
+		return reduced_forecast
+	else
+		return orig_forecast
+	end
+end
+
 -- Takes in the user's info request and a forecast table and returns a string with the requested info.
 function weather.prepare_forecast (forecast, req)
 	local forecast_str = ""
@@ -70,7 +91,7 @@ function weather.prepare_forecast (forecast, req)
 		return nil
 	end
 
-	return forecast_str
+	return reduce_forecast(forecast_str)
 end
 
 return weather

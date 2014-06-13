@@ -10,12 +10,18 @@ Number of forecasts is how many forecast periods will be given.  For example,
 requesting four forecasts at 11am on a Tuesday will return the forecasts for
 "This afternoon," "Tonight," "Wednesday," and "Wednesday night."
 
-Forecast type is either "short" or "full."  An example of a short forecast
-might be "Partly cloudy" or "Chance thunderstorms."  A full forecast is longer,
-e.g. "A chance of drizzle, then a chance of rain or drizzle after 1am.  Patchy
-fog.  Otherwise, cloudy, with a low around 61. East wind around 7 mph.  Chance
-of precipitation is 30%. New precipitation amounts between a tenth and quarter
-of an inch possible."
+Forecast type is either "short," "long," or "full."  An example of a short forecast
+might be "Partly cloudy" or "Chance thunderstorms."
+
+A full forecast is longer, e.g. "A chance of drizzle, then a chance of rain or
+drizzle after 1am.  Patchy fog.  Otherwise, cloudy, with a low around 61. East
+wind around 7 mph.  Chance of precipitation is 30%. New precipitation amounts
+between a tenth and quarter of an inch possible."
+
+A long forecast is a full forecast with sentences describing precipitation
+amounts and wind speed/direction removed.  The above full forecast would
+require two text messages to send, whereas the long version would only require
+one.
 
 Sample requests:
 
