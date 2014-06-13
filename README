@@ -1,7 +1,8 @@
 SMS Weather, a service for delivering weather forecasts via text messages.
 
 Text a forecast request to 412-423-8207.  Make requests in the form of a
-location, desired number of forecasts, and forecast type.
+location, desired number of forecasts, and forecast type.  Defaults to
+a single full forecast.
 
 Location can be either a zip code, or a city and a state.
 
@@ -20,3 +21,4 @@ Sample requests:
 
 21502 4 short
 Cumberland, md 1 full
+Philadelphia, PA

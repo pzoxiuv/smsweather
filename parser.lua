@@ -30,6 +30,13 @@ function parser.parse_content (content)
                 return loc, req_table
             end
         end
+		-- Default to a single full forecast
+		loc["state"] = t[#t]
+		table.remove(t, #t)
+		loc["city"] = table.concat(t, " ")
+		req_table["num"] = "1"
+		req_table["type"] = "full"
+		return loc, req_table
     end
 end
 
