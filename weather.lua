@@ -82,16 +82,17 @@ function weather.prepare_forecast (forecast, req)
 		for i=1, req["num"] do
 			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["text"][i]
 		end
-	elseif req["type"] == "short" then
+	elseif req["type"] == "short" or req["type"] == "long" then
 		for i=1, req["num"] do
 			forecast_str = forecast_str .. forecast["time"]["startPeriodName"][i] .. ": " .. forecast["data"]["weather"][i] .. ". "
 		end
         forecast_str = string.gsub(forecast_str, "^%s*(.-)%s*$", "%1")
+		if req["type"] == "long" then forecast_str = reduce_forecast(forecast_str) end
 	else
 		return nil
 	end
 
-	return reduce_forecast(forecast_str)
+	return forecast_str
 end
 
 return weather
